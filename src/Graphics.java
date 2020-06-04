@@ -109,36 +109,21 @@ public class Graphics extends JFrame implements ActionListener {
                 if (e.getSource() == botones.get(i)) {
                     int res = 0;
                     if (botones.get(i).isSelected()) {
+
                         if (contador <= 6) {
-                            if (contador == 5) {
-                                res = JOptionPane.showConfirmDialog(this,
-                                        "¿Seguro? Al marcar el sexto numero no podras deshacer", "Cuidao!",
-                                        JOptionPane.YES_NO_OPTION);
-                                if (res == JOptionPane.YES_OPTION) {
-                                    System.err.println("sumo");
-                                    boolean meto = true;
-                                    for (int j = 0; j < 6; j++) {
-                                        if (seleccion[j] == 0 && meto) {
-                                            seleccion[j] = i + 1;
-                                            meto = false;
-                                        }
-                                    }
-                                    contador++;
-                                } else {
-                                    botones.get(i).setSelected(false);
+
+                            System.err.println("sumo");
+                            boolean meto = true;
+                            for (int j = 0; j < 6; j++) {
+                                if (seleccion[j] == 0 && meto) {
+                                    seleccion[j] = i + 1;
+                                    meto = false;
                                 }
-                            } else {
-                                System.err.println("sumo");
-                                boolean meto = true;
-                                for (int j = 0; j < 6; j++) {
-                                    if (seleccion[j] == 0 && meto) {
-                                        seleccion[j] = i + 1;
-                                        meto = false;
-                                    }
-                                }
-                                contador++;
                             }
+                            contador++;
+
                         }
+
                     } else {
                         System.err.println("resto");
 
@@ -161,15 +146,36 @@ public class Graphics extends JFrame implements ActionListener {
             }
             lista = lista.substring(0, lista.length() - 1);
 
-            if (contador >= 6) {
-                for (int i = 0; i < botones.size(); i++) {
-                    botones.get(i).setEnabled(false);
-                    loteria.setVisible(true);
-                    seleccionados.setText("Numeros seleccionados: " + lista);
+            if (contador < 6) {
+                for (int i = 1; i <= botones.size(); i++) {
+                    botones.get(i - 1).setEnabled(true);
                 }
             }
 
+            if (contador == 6) {
+                loteria.setVisible(true);
+                seleccionados.setText("Numeros seleccionados: " + lista);
+                for (int i = 1; i <= botones.size(); i++) {
+                    boolean desmarca = false;
+                    for (int j = 0; j < seleccion.length; j++) {
+                        if (i == seleccion[j]) {
+                            desmarca = true;
+                        }
+                    }
+                    if (!desmarca) {
+                        botones.get(i - 1).setEnabled(false);
+                    }
+                }
+
+            } else {
+                loteria.setVisible(false);
+                seleccionados.setText("");
+            }
+
             if (e.getSource() == loteria) {
+                for (int i = 1; i <= botones.size(); i++) {
+                    botones.get(i - 1).setEnabled(false);
+                }
                 lista = "";
                 for (int i = 0; i < numeros.length; i++) {
 
