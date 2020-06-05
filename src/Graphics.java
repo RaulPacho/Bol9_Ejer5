@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Graphics extends JFrame implements ActionListener {
+public class Graphics extends JFrame implements ActionListener, javax.swing.event.ChangeListener {
 
     ArrayList<JCheckBox> botones = new ArrayList();
     JButton loteria, otra;
@@ -39,6 +39,7 @@ public class Graphics extends JFrame implements ActionListener {
             botones.get(i).addActionListener(this);
             botones.get(i).setSize(50, 35);
             botones.get(i).setLocation(x, y);
+            botones.get(i).addChangeListener(this);
             x += 75;
             if ((i + 1) % 7 == 0) {
                 x = 25;
@@ -105,40 +106,40 @@ public class Graphics extends JFrame implements ActionListener {
             this.setTitle(titulo.substring(0, contTiempo));
         } else {
             // System.err.println(e.getSource() == botones.get(0));
-            for (int i = 0; i < botones.size(); i++) {
-                if (e.getSource() == botones.get(i)) {
-                    int res = 0;
-                    if (botones.get(i).isSelected()) {
+            // for (int i = 0; i < botones.size(); i++) {
+            //     if (e.getSource() == botones.get(i)) {
+            //         int res = 0;
+            //         if (botones.get(i).isSelected()) {
 
-                        if (contador <= 6) {
+            //             if (contador <= 6) {
 
-                            System.err.println("sumo");
-                            boolean meto = true;
-                            for (int j = 0; j < 6; j++) {
-                                if (seleccion[j] == 0 && meto) {
-                                    seleccion[j] = i + 1;
-                                    meto = false;
-                                }
-                            }
-                            contador++;
+            //                 System.err.println("sumo");
+            //                 boolean meto = true;
+            //                 for (int j = 0; j < 6; j++) {
+            //                     if (seleccion[j] == 0 && meto) {
+            //                         seleccion[j] = i + 1;
+            //                         meto = false;
+            //                     }
+            //                 }
+            //                 contador++;
 
-                        }
+            //             }
 
-                    } else {
-                        System.err.println("resto");
+            //         } else {
+            //             System.err.println("resto");
 
-                        contador--;
-                        for (int j = 0; j < 6; j++) {
-                            if (seleccion[j] == i + 1) {
-                                seleccion[j] = 0;
-                            }
-                        }
+            //             contador--;
+            //             for (int j = 0; j < 6; j++) {
+            //                 if (seleccion[j] == i + 1) {
+            //                     seleccion[j] = 0;
+            //                 }
+            //             }
 
-                    }
+            //         }
 
-                }
+            //     }
 
-            }
+            // }
             lista = "";
             for (int i = 0; i < 6; i++) {
                 System.err.println(seleccion[i]);
@@ -241,6 +242,41 @@ public class Graphics extends JFrame implements ActionListener {
             }
         }
         return false;
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        int res = 0;
+        for (int i = 0; i < botones.size(); i++) {
+            if (botones.get(i).isSelected()) {
+
+                if (contador <= 6) {
+
+                    System.err.println("sumo");
+                    boolean meto = true;
+                    for (int j = 0; j < 6; j++) {
+                        if (seleccion[j] == 0 && meto) {
+                            seleccion[j] = i + 1;
+                            meto = false;
+                        }
+                    }
+                    contador++;
+
+                }
+
+            } else {
+                System.err.println("resto");
+
+                contador--;
+                for (int j = 0; j < 6; j++) {
+                    if (seleccion[j] == i + 1) {
+                        seleccion[j] = 0;
+                    }
+                }
+
+            }
+        }
+
     }
 
 }
