@@ -12,8 +12,8 @@ public class Graphics extends JFrame implements ActionListener, ItemListener {
 
     ArrayList<JCheckBox> botones = new ArrayList();
     JButton loteria, otra;
-    int[] numeros = new int[6];
-    int[] seleccion = new int[6];
+    ArrayList<Integer> numeros = new ArrayList();
+    ArrayList<Integer> seleccion = new ArrayList();
     Timer t;
     String titulo;
     int x, y;
@@ -141,7 +141,6 @@ public class Graphics extends JFrame implements ActionListener, ItemListener {
             // }
 
             // }
-            
 
             // if (contador < 6) {
             // for (int i = 1; i <= botones.size(); i++) {
@@ -170,28 +169,29 @@ public class Graphics extends JFrame implements ActionListener, ItemListener {
             // }
 
             if (e.getSource() == loteria) {
+                lista = "";
                 for (int i = 1; i <= botones.size(); i++) {
                     botones.get(i - 1).setEnabled(false);
                 }
                 // lista = "";
-                for (int i = 0; i < numeros.length; i++) {
+                for (int i = 0; i < 6; i++) {
 
                     int num = (int) (Math.random() * (49 - 1) + 1);
-                    if (!estaYa(num)) {
-                        numeros[i] = num;
+                    if (!numeros.contains(num)) {
+                        numeros.add(num);
                         lista = lista + num + ",";
                     } else {
                         i--;
                     }
                 }
                 numSorteo.setText("Numeros premiados: " + lista);
-                for (int i = 0; i < numeros.length; i++) {
-                    botones.get(numeros[i] - 1).setBackground(Color.blue);
+                for (int i = 0; i < numeros.size(); i++) {
+                    botones.get(numeros.get(i) - 1).setBackground(Color.blue);
                 }
-                for (int i = 0; i < seleccion.length; i++) {
-                    botones.get(seleccion[i] - 1).setBackground(Color.red);
-                    if (estaYa(seleccion[i])) {
-                        botones.get(seleccion[i] - 1).setBackground(Color.green);
+                for (int i = 0; i < seleccion.size(); i++) {
+                    botones.get(seleccion.get(i) - 1).setBackground(Color.red);
+                    if (numeros.contains(seleccion.get(i))) {
+                        botones.get(seleccion.get(i) - 1).setBackground(Color.green);
                         contNumeros++;
                     }
                 }
@@ -205,10 +205,8 @@ public class Graphics extends JFrame implements ActionListener, ItemListener {
                     botones.get(i).setSelected(false);
                     botones.get(i).setEnabled(true);
                 }
-                for (int i = 0; i < seleccion.length; i++) {
-                    seleccion[i] = 0;
-                    numeros[i] = 0;
-                }
+                seleccion.clear();
+                numeros.clear();
                 loteria.setEnabled(true);
                 loteria.setVisible(false);
                 otra.setVisible(false);
@@ -231,95 +229,82 @@ public class Graphics extends JFrame implements ActionListener, ItemListener {
         }
     }
 
-    public boolean estaYa(int num) {
-        for (int i = 0; i < numeros.length; i++) {
-            if (num == numeros[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
+    /*
+     * public boolean estaYa(int num) { for (int i = 0; i < numeros.size(); i++) {
+     * if (num == numeros.get(i)) { return true; } } return false; }
+     */
 
     @Override
     public void itemStateChanged(ItemEvent e) {
         int res = 0;
-
         System.err.println(contador);
-        for (int i = 0; i < botones.size(); i++) {
-            if (botones.get(i) == e.getSource()) {
 
-                if (botones.get(i).isSelected()) {
+                if (((JCheckBox) e.getSource()).isSelected()) {
                     if (contador <= 6) {
 
                         System.err.println("sumo");
                         boolean meto = true;
-                        for (int j = 0; j < 6; j++) {
-                            if (seleccion[j] == 0 && meto) {
-                                seleccion[j] = i + 1;
-                                meto = false;
-                            }
-                        }
+                        seleccion.add(Integer.parseInt(((JCheckBox) e.getSource()).getText()));
                         contador++;
 
                     }
                 } else {
                     System.err.println("resto");
-
                     contador--;
-                    for (int j = 0; j < 6; j++) {
-                        if (seleccion[j] == i + 1) {
-                            seleccion[j] = 0;
+                    
+                        if (seleccion.contains(Integer.parseInt(((JCheckBox) e.getSource()).getText()))) {
+                            
+                            seleccion.remove(seleccion.indexOf(Integer.parseInt(((JCheckBox) e.getSource()).getText())));
                         }
-                    }
+                    
 
                 }
-            }
-        }
-
-        if (contador < 6) {
-            for (int i = 1; i <= botones.size(); i++) {
-                botones.get(i - 1).setEnabled(true);
-            }
-        }
-
-        if (contador == 6) {
             
-            loteria.setVisible(true);
+        
 
-            for (int i = 1; i <= botones.size(); i++) {
-                boolean desmarca = false;
-                for (int j = 0; j < seleccion.length; j++) {
-                    if (i == seleccion[j]) {
-                        desmarca = true;
-                    }
-                    listaSelec = listaSelec + seleccion[j] + ",";
-                }
-                if (!desmarca) {
-                    botones.get(i - 1).setEnabled(false);
-                }
+    if(contador<6)
 
-            }
-            listaSelec = "Numeros seleccionados: ";
-            for (int i = 0; i < seleccion.length; i++) {
-                listaSelec = listaSelec + seleccion[i] + ",";
-            }
-            
-            seleccionados.setText(listaSelec);
-
-        } else {
-            loteria.setVisible(false);
-            seleccionados.setText("");
+    {
+        for (int i = 1; i <= botones.size(); i++) {
+            botones.get(i - 1).setEnabled(true);
         }
+    }
+
+    if(contador==6)
+    {
+
+        loteria.setVisible(true);
+
+        for (int i = 1; i <= botones.size(); i++) {
+            boolean desmarca = false;
+            
+            if (!seleccion.contains(i)) {
+                botones.get(i - 1).setEnabled(false);
+            }
+
+        }
+        listaSelec = "Numeros seleccionados: ";
+        for (int i = 0; i < seleccion.size(); i++) {
+            listaSelec = listaSelec + seleccion.get(i) + ",";
+        }
+
+        seleccionados.setText(listaSelec);
+
+    }else
+    {
+        loteria.setVisible(false);
+        seleccionados.setText("");
+    }
 
     }
 
-    public boolean yaEstaSelec(int num) {
+   /* public boolean yaEstaSelec(int num) {
         for (int i = 0; i < seleccion.length; i++) {
             if (seleccion[i] == num) {
                 return true;
             }
         }
         return false;
-    }
+    }*/
 
 }
